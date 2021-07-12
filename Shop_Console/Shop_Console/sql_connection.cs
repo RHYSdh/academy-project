@@ -54,7 +54,7 @@ namespace Shop_Console
             {
                 for (int i = 0; i < whatLength; i++)
                 {
-                    output += data[i].ToString().PadRight(20, ' ');
+                    output += " " + data[i].ToString().PadRight(6, ' ');
                 }
                 output += "\n";
             }

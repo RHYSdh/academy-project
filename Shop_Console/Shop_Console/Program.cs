@@ -16,8 +16,7 @@ namespace Shop_Console
             menus_Functions Y = new menus_Functions();
 
             Y.menuMain(1);
-
-
+            
 
             Console.ReadLine();
 
