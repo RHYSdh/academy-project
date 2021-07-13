@@ -15,7 +15,7 @@ namespace Shop_Console
         string user = "root";
         string password = "root";
         string database = "sales";
-        string tableName = "shop";
+        string tableName = "sales";
 
 
         
@@ -43,7 +43,7 @@ namespace Shop_Console
 
         }
 
-        public string SQLReturn(string what, int whatLength, string where) //return string of SQL select command  
+        public string SQLReturn(string what, int whatLength, string where, int padding) //return string of SQL select command  
         {
             string input = $"select {what} from {tableName} {where}";
             string output = "";
@@ -54,7 +54,7 @@ namespace Shop_Console
             {
                 for (int i = 0; i < whatLength; i++)
                 {
-                    output += " " + data[i].ToString().PadRight(6, ' ');
+                    output += " " + data[i].ToString().PadRight(padding, ' ');
                 }
                 output += "\n";
             }
@@ -62,7 +62,7 @@ namespace Shop_Console
             return output;
         } //"Select -what- from -table- where -xyz-", Use ";" if no where option is needed, whatLength must be <= MySQL table columns
 
-        public void SQLCreate(string product, int qty, float price, string inDate) //insert data to shop table
+        public void SQLCreate(string product, int qty, decimal price, string inDate) //insert data to shop table
         {
             cmd.CommandText = $"INSERT INTO {tableName}(ProductName, Quantity, Price, SaleDate) VALUES ('{product}',{qty},{price},'{inDate}')";
             cmd.ExecuteNonQuery();
@@ -80,7 +80,7 @@ namespace Shop_Console
                 int prod1 = rand.Next(1, 12);
                 string prodName = "";
                 int qty1 = rand.Next(1, 5);
-                float price = 0;
+                decimal price = 0;
 
                 if (dat1 == 31 && dat2 == 2 || dat1 == 30 && dat2 == 2 || dat1 == 29 && dat2 == 2)
                 {
@@ -95,62 +95,62 @@ namespace Shop_Console
                 if (prod1 == 1)
                 {
                     prodName = "Pepsi";
-                    price = (float)0.99;
+                    price = 0.99M;
                 }
                 else if (prod1 == 2)
                 {
                     prodName = "Coke";
-                    price = (float)1.20;
+                    price = 1.20M;
                 }
                 else if (prod1 == 3)
                 {
                     prodName = "Evian";
-                    price = (float)0.70;
+                    price = 0.70M;
                 }
                 else if (prod1 == 4)
                 {
                     prodName = "Tango";
-                    price = (float)0.89;
+                    price = 0.89M;
                 }
                 else if (prod1 == 5)
                 {
                     prodName = "7up";
-                    price = (float)1.00;
+                    price = 1.00M;
                 }
                 else if (prod1 == 6)
                 {
                     prodName = "Dr Pepper";
-                    price = (float)1.10;
+                    price = 1.10M;
                 }
                 else if (prod1 == 7)
                 {
                     prodName = "Sprite";
-                    price = (float)0.99;
+                    price = 0.99M;
                 }
                 else if (prod1 == 8)
                 {
                     prodName = "Mountain Dew";
-                    price = (float)1.50;
+                    price = 1.50M;
                 }
                 else if (prod1 == 9)
                 {
                     prodName = "Monster";
-                    price = (float)2.10;
+                    price = 2.10M;
                 }
                 else if (prod1 == 10)
                 {
                     prodName = "Redbull";
-                    price = (float)2.00;
+                    price = 2.00M;
                 }
                 else if (prod1 == 11)
                 {
                     prodName = "Fanta";
-                    price = (float)1.20;
+                    price = 1.20M;
                 }
                 else
                 {
                     prodName = "Coffee";
-                    price = (float)1.00;
+                    price = 1.00M;
                 }
                 SQLCreate(prodName, qty1, price, $"{dat3}-{dat2}-{dat1}");
                 Console.WriteLine($"({prodName}, {qty1}, {price}, {dat3}-{dat2}-{dat1})");

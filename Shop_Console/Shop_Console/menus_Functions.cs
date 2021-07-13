@@ -51,7 +51,7 @@ namespace Shop_Console
 
             if (mainChoice == "1")
             {
-                menuNew(1);
+                menuNewEntry(1);
             }
             else if (mainChoice == "2")
             {
@@ -67,7 +67,7 @@ namespace Shop_Console
             }
         }
 
-        public void menuNew(int chk = 0) //Menu to add new sale entry
+        public void menuNewEntry(int chk = 0) //Menu to add new sale entry
         {
             newHeader("Add new entry", ConsoleColor.Green);
             Console.WriteLine("");
@@ -89,9 +89,9 @@ namespace Shop_Console
 
             string product = "";
             int qty = 0;
-            float price = 0;
+            decimal price = 0;
             string setDate = "";
-            float defPrice = 1.00F;
+            decimal defPrice = 1.00M;
             int value;
 
             string newChoice = Console.ReadLine();
@@ -100,7 +100,7 @@ namespace Shop_Console
             {
 
                 string[] drinks = { "Pepsi", "Coke", "Evian", "Tango", "7up", "Dr Pepper", "Sprite", "Mountain Dew", "Monster", "Redbull", "Fanta" };
-                float[] prices = { 0.99F, 1.20F, 0.70F, 0.89F, 1.00F, 1.10F, 0.99F, 1.50F, 2.10F, 2.00F, 1.20F };
+                decimal[] prices = { 0.99M, 1.20M, 0.70M, 0.89M, 1.00M, 1.10M, 0.99M, 1.50M, 2.10M, 2.00M, 1.20M };
 
                 newHeader("Add new entry", ConsoleColor.Green);
                 Console.WriteLine("");
@@ -135,7 +135,7 @@ namespace Shop_Console
                         }
                         else if (value == 0)
                         {
-                            menuNew(1);
+                            menuNewEntry(1);
                         }
                         else { Console.WriteLine("Invalid entry, try again: "); }
                     }
@@ -169,7 +169,7 @@ namespace Shop_Console
             }
             else //Invalid input reload menu with default error
             {
-                menuNew();
+                menuNewEntry();
             }
 
             //If product has been set, start additional questions.
@@ -220,8 +220,8 @@ namespace Shop_Console
                 while (price == 0)
                 {
                     newChoice = Console.ReadLine();
-                    float p;
-                    if (float.TryParse(newChoice, out p))
+                    decimal p;
+                    if (decimal.TryParse(newChoice, out p))
                     {
                         if (p == 0)
                         {
@@ -317,13 +317,15 @@ namespace Shop_Console
                 }
 
                 // Additional questions (Confirm new entry)
-
-                Console.WriteLine("");
-                Console.WriteLine("Confirm new entry? (Y/N)");
                 Console.WriteLine("");
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"{product} Qty:{qty} @ £{price} Date:{userDate}");
                 Console.ResetColor();
+
+                Console.WriteLine("");
+                Console.WriteLine("Confirm new entry? (Y/N)");
+                Console.WriteLine("");
+
                 string confirmed = "";
                 while (confirmed == "")
                 {
@@ -349,7 +351,7 @@ namespace Shop_Console
                 }
 
                 System.Threading.Thread.Sleep(750);
-                menuNew(1);
+                menuNewEntry(1);
             }
         }
 
@@ -379,88 +381,19 @@ namespace Shop_Console
 
             if (repChoice == "1")
             {
-                string year = "";
-                while (year == "")
-                {
-                    Console.WriteLine("");
-                    Console.WriteLine("Type the year in (YYYY) format and press enter:");
-                    Console.WriteLine("");
-                    year = Console.ReadLine();
-                    int temp;
-                    if (int.TryParse(year, out temp) && year.Length == 4)
-                    {
-                        newHeader("Review Sales", ConsoleColor.Green);
-                        Console.WriteLine("");
-                        Console.WriteLine("Sales / Product for year " + year);
-                        Console.WriteLine("");
-                        Console.WriteLine(SQL.SQLReturn("count(*),productname", 2, $"where saledate >= '{year}/01/01' and saledate <= '{year}/12/31' group by productname order by 1 desc;"));
-                        Console.WriteLine("");
-                        Console.WriteLine("Press enter to continue.");
-                        Console.ReadLine();
-                        menuReports(1);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid entry, try again: ");
-                        year = "";
-                    }
-                }
+                getReport("n", "n");
             }
             else if (repChoice == "2")
             {
-                string year = "";
-                string month = "";
-                while (year == "")
-                {
-                    Console.WriteLine("");
-                    Console.WriteLine("Type the year in (YYYY) format and press enter:");
-                    Console.WriteLine("");
-                    year = Console.ReadLine();
-                    int temp;
-                    if (int.TryParse(year, out temp) && year.Length == 4)
-                    {
-                        while (month == "")
-                        {
-                            Console.WriteLine("");
-                            Console.WriteLine("Type the month number in (1-12) and press enter:");
-                            Console.WriteLine("");
-                            month = Console.ReadLine();
-                            if (int.TryParse(month, out temp))
-                            {
-                                if (Int32.Parse(month) >= 1 && Int32.Parse(month) <= 12)
-                                {
-                                    newHeader("Review Sales", ConsoleColor.Green);
-                                    Console.WriteLine("");
-                                    Console.WriteLine("Sales / Product for " + month + "/" + year);
-                                    Console.WriteLine("");
-                                    Console.WriteLine(SQL.SQLReturn("count(*),productname", 2, $"where saledate >= '{year}/{month}/01' and saledate <= '{repEndDate(Int32.Parse(year), Int32.Parse(month))}' group by productname order by 1 desc;"));
-                                    Console.WriteLine("");
-                                    Console.WriteLine("Press enter to continue.");
-                                    Console.ReadLine();
-                                    menuReports(1);
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Invalid entry, try again: ");
-                                year = "";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid entry, try again: ");
-                        year = "";
-                    }
-                }
+                getReport("y", "n");
             }
             else if (repChoice == "3")
             {
-
+                getReport("n", "y");
             }
             else if (repChoice == "4")
             {
-
+                getReport("y", "y");
             }
             else if (repChoice == "10")
             {
@@ -472,27 +405,103 @@ namespace Shop_Console
             }
         }
 
-        public string repEndDate(int year, int month = 01)
+        public void getReport(string monthNeeded, string totalNeeded)
         {
-            string theDate = "";
-            int day = 31;
 
-            while (theDate == "")
+            string year = "";
+            string month = "";
+
+            newHeader("Review Sales", ConsoleColor.Green);
+
+            Console.WriteLine("");
+            Console.WriteLine("Type the year in (YYYY) format and press enter:");
+            Console.WriteLine("");
+
+            while (year == "")
             {
-                theDate = $"{year}-{month}-{day}";
-                DateTime temp;
-                if (DateTime.TryParse(theDate, out temp))
+                year = Console.ReadLine();
+                int temp;
+                if (int.TryParse(year, out temp) && year.Length == 4)
                 {
-                    return theDate;
                 }
                 else
                 {
-                    theDate = "";
-                    day--;
+                    Console.WriteLine("Invalid entry, try again:");
+                    year = "";
                 }
             }
-            return theDate;
-        }
 
+            if (monthNeeded == "y")
+            {
+                while (month == "")
+                {
+                    Console.WriteLine("");
+                    Console.WriteLine("Type the month number in (1-12) and press enter:");
+                    Console.WriteLine("");
+                    month = Console.ReadLine();
+                    int temp;
+                    if (int.TryParse(month, out temp))
+                    {
+                        if (Int32.Parse(month) >= 1 && Int32.Parse(month) <= 12)
+                        {
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid entry, try again: ");
+                            month = "";
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid entry, try again: ");
+                        month = "";
+                    }
+
+                }
+            }
+            else
+            {
+                month = "12";
+            }
+
+            if (totalNeeded == "y")
+            {
+
+                if (monthNeeded == "y")
+                {
+                    Console.WriteLine($" Product        Quantity       Price          Total, for  {month}/{year}");
+                    Console.WriteLine("");
+                    Console.WriteLine(SQL.SQLReturn("productname,count(*),price,price*quantity", 4, $"where year(saledate)='{year}' and month(saledate)='{month}' group by productname order by 4 desc;", 14));
+                    Console.WriteLine("Total £" + SQL.SQLReturn("sum(price * quantity)", 1, $"where year(saledate)='{year}' and month(saledate)='{month}'", 5));
+                }
+                else
+                {
+                    Console.WriteLine($" Product        Quantity       Price          Total, for year {year}");
+                    Console.WriteLine("");
+                    Console.WriteLine(SQL.SQLReturn("productname,count(*),price,price*quantity", 4, $"where year(saledate)='{year}' group by productname order by 4 desc;", 14));
+                    Console.WriteLine("Total £" + SQL.SQLReturn("sum(price * quantity)", 1, $"where year(saledate)={year}", 5));
+                }
+            }
+            else
+            {
+                if (monthNeeded == "y")
+                {
+                    Console.WriteLine($"Sales / Product for {month}/{year}");
+                    Console.WriteLine("");
+                    Console.WriteLine(SQL.SQLReturn("count(*),productname", 2, $"where year(saledate)='{year}' and month(saledate)='{month}' group by productname order by 1 desc;", 6));
+                }
+                else
+                {
+                    Console.WriteLine("Sales / Product for year " + year);
+                    Console.WriteLine("");
+                    Console.WriteLine(SQL.SQLReturn("count(*),productname", 2, $"where year(saledate)='{year}' group by productname order by 1 desc;", 6));
+                }
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("Press enter to continue.");
+            Console.ReadLine();
+            menuReports(1);
+        }
     }
 }
