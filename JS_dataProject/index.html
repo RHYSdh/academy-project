@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javascript Final Project</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Final Project Javascript Database</h1> <input type="text" id="test" onfocusout="test()" onkeydown="" onkeyup=""> <input type="button" onclick="addDetails()" value="₪"> 
+    <h2>Database Explorer</h2>
+    <h3>Choose departments to view and amend data</h3>
+    <input type="checkbox" id="HR" onclick="showHideData()"><label for="HR">Human Resources</label>
+    <input type="checkbox" id="IT" onclick="showHideData()"><label for="HR">Information Technologies</label>
+    <input type="checkbox" id="Sales" onclick="showHideData()"><label for="HR">Sales</label>
+    <div id="dataDisplay"></div>
+    <div id="editBox"></div>
+    <div id="toolTip">
+    </div>
+    
+</body>
+<script src="data.js"></script>
+<script src="script.js"></script>
+
+</html>

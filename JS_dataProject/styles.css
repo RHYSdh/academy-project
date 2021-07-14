@@ -1,0 +1,17 @@
+
+td {
+    border: black solid 1px;
+    padding: 10px;
+    text-align: right;
+}
+
+tr:hover {
+    background-color: lightgrey;
+}
+
+th {
+    text-align: center;
+    padding: 10px;
+    color: white;
+    background-color: teal;
+}
