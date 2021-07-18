@@ -1,24 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Javascript Final Project</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <h1>Final Project Javascript Database</h1> <input type="text" id="test" onfocusout="test()" onkeydown="" onkeyup=""> <input type="button" onclick="addDetails()" value="₪"> 
-    <h2>Database Explorer</h2>
-    <h3>Choose departments to view and amend data</h3>
-    <input type="checkbox" id="HR" onclick="showHideData()"><label for="HR">Human Resources</label>
-    <input type="checkbox" id="IT" onclick="showHideData()"><label for="HR">Information Technologies</label>
-    <input type="checkbox" id="Sales" onclick="showHideData()"><label for="HR">Sales</label>
-    <div id="dataDisplay"></div>
-    <div id="editBox"></div>
-    <div id="toolTip">
+    <div id="headControl">
+        <h2>Database Explorer</h2>
+        <h3>Choose departments from the drop down, to view and amend data.</h3>
+
+        <select id="deptChoice" onchange="displayUpdate()">
+            <option value="All">All</option>
+            <option value="HR">HR</option>
+            <option value="IT">IT</option>
+            <option value="Sales">Sales</option>
+        </select>
+
+        <input type="button" value="New" onclick="popup()" class="addBTN">
     </div>
-    
+
+    <div id="dataDisplay">
+        <table id="mainTable">
+            <tr>
+                <th>NI Number</th>
+                <th>Fullname</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Department</th>
+            </tr>
+        </table>
+    </div>
+
+    <div id="editBox" style="visibility: hidden;">
+        <h2 id="editHead">Add new record</h2>
+        <input type="button" onclick="document.getElementById('editBox').style.visibility='hidden'; document.getElementById('addDelete').style.visibility='hidden'" value="X" class="closeBTN">
+        <table id="editDisplay">
+            <tr>
+                <th>NI Number</th>
+                <th>Fullname</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Department</th>
+            </tr>
+            <tr>
+                <td><input type="text" id="NIinput" maxlength="9" onkeyup="validate('NI')"
+                        onfocusout="this.value = this.value.toUpperCase()"></td>
+                <td><input type="text" id="NAMEinput" onkeyup="validate('NAME')"></td>
+                <td><input type="text" id="ADDRinput" onkeyup="validate('ADDR')"></td>
+                <td><input type="text" id="PHONEinput" maxlength="11" onkeyup="validate('PHONE')"></td>
+                <td>
+                    <select id="DEPTinput">
+                        <option value="HR">HR</option>
+                        <option value="IT">IT</option>
+                        <option value="Sales">Sales</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td id="niVAL"></td>
+                <td id="nameVAL"></td>
+                <td id="addrVAL"></td>
+                <td id="phoneVAL"></td>
+                <td></td>
+            </tr>
+        </table>
+        <input type="button" onclick="addDetails()" value="Add" class="addBTN" id="addUpdate" disabled>
+        <input type="button" onclick="removeDetails()" value="Delete" class="delBTN" id="addDelete" style="visibility: hidden;">
+    </div>
+
 </body>
 <script src="data.js"></script>
 <script src="script.js"></script>

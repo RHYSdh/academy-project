@@ -1,84 +1,36 @@
-
 let display = document.getElementById('dataDisplay');
-let tip = document.getElementById('toolTip');
+let displayTable = document.getElementById("mainTable");
 let editDisplay = document.getElementById("editBox");
-let displayTable = document.createElement("table");
-displayTable.id = "mainTable";
-let tableCreated = false;
-let hrOnShow = false;
-let itOnShow = false;
-let salesOnShow = false;
-let chkHR = document.getElementById("HR");
-let chkIT = document.getElementById("IT");
-let chkSales = document.getElementById("Sales");
+let editIndex = 0;
+let editing = false;
 
-function showHideData() {
-    if (tableCreated == false) {
-        tRow = document.createElement("tr");
-        tdNI = document.createElement("th");
-        tdName = document.createElement("th");
-        tdAddr = document.createElement("th");
-        tdPhone = document.createElement("th");
-        tdDept = document.createElement("th");
+function displayUpdate() {
+    let choice = document.getElementById("deptChoice").value;
 
-        tdNI.innerHTML = "NI Number";
-        tdName.innerHTML = "Name";
-        tdAddr.innerHTML = "Address";
-        tdPhone.innerHTML = "Phone";
-        tdDept.innerHTML = "Department";
-
-        tRow.appendChild(tdNI);
-        tRow.appendChild(tdName);
-        tRow.appendChild(tdAddr);
-        tRow.appendChild(tdPhone);
-        tRow.appendChild(tdDept);
-
-        displayTable.appendChild(tRow);
-        tableCreated = true;
+    if (choice == "All") {
+        tableUpdate("All");
     }
-
-    if (chkHR.checked == true && hrOnShow == false) {
-
-        tableAdd("HR");
-        hrOnShow = true;
-
+    else if (choice == "HR") {
+        tableUpdate("HR");
     }
-    else if (chkIT.checked == true && itOnShow == false) {
-
-        tableAdd("IT");
-        itOnShow = true;
-
+    else if (choice == "IT") {
+        tableUpdate("IT");
     }
-    else if (chkSales.checked == true && salesOnShow == false) {
-
-        tableAdd("Sales");
-        salesOnShow = true;
-
-    }
-    else if (chkHR.checked == false && hrOnShow == true) {
-
-        tableDel("HR");
-        hrOnShow = false;
-
-    }
-    else if (chkIT.checked == false && itOnShow == true) {
-
-        tableDel("IT");
-        itOnShow = false;
-
-    }
-    else if (chkSales.checked == false && salesOnShow == true) {
-
-        tableDel("Sales");
-        salesOnShow = false;
+    else if (choice == "Sales") {
+        tableUpdate("Sales");
     }
 
 }
 
-function tableAdd(department) {
+function tableUpdate(department) {
+    let rowCount = displayTable.rows.length - 1;
+    for (let x = rowCount; x >= 1; x--) {
+        displayTable.rows[x].remove("tr");
+    }
+
     for (let i = 0; i < QArecords.length; i++) {
 
-        if (QArecords[i].department == department) {
+        if (QArecords[i].department == department || department == "All") {
 
             tRow = document.createElement("tr");
             tdNI = document.createElement("td");
@@ -86,120 +38,200 @@ function tableAdd(department) {
             tdAddr = document.createElement("td");
             tdPhone = document.createElement("td");
             tdDept = document.createElement("td");
+            tdControl = document.createElement("td");
 
             tdNI.innerHTML = QArecords[i].ninumber;
             tdName.innerHTML = QArecords[i].fullname;
             tdAddr.innerHTML = QArecords[i].address;
             tdPhone.innerHTML = QArecords[i].phone;
             tdDept.innerHTML = QArecords[i].department;
+            let delBTN = document.createElement("input");
+            delBTN.type = "button";
+            delBTN.value = "✎";
+            delBTN.className = "editBTN";
+            delBTN.onclick = function () {
+                editDetails(i);
+            }
+
+            tdControl.appendChild(delBTN);
+            tdControl.style.background = "white";
+            tdControl.style.border = "0px";
+            tdControl.style.padding = "0px";
+            //tdControl.style.width = 45;
 
             tRow.appendChild(tdNI);
             tRow.appendChild(tdName);
             tRow.appendChild(tdAddr);
             tRow.appendChild(tdPhone);
             tRow.appendChild(tdDept);
+            tRow.appendChild(tdControl);
 
             displayTable.appendChild(tRow);
-
-            display.appendChild(displayTable);
         }
     }
 }
 
-function tableDel(department) {
-    let table = document.getElementById("mainTable");
-
-    for (let i = 0; i < table.rows.length; i++) {
-
-        if (table.rows[i].cells[4].innerHTML == department) {
-
-            table.rows[i].remove("tr");
-            i = -1;
-        }
+function removeDetails() {
+    if (confirm("Are you sure?")) {
+        QArecords.splice(editIndex, 1);
+        displayUpdate();
+        editDisplay.style.visibility = "hidden";
+        document.getElementById("addDelete").style.visibility = "hidden";
     }
+}
 
+function editDetails(qaIndex) {
+    document.getElementById("NIinput").value = QArecords[qaIndex].ninumber;
+    document.getElementById("NAMEinput").value = QArecords[qaIndex].fullname;
+    document.getElementById("ADDRinput").value = QArecords[qaIndex].address;
+    document.getElementById("PHONEinput").value = QArecords[qaIndex].phone;
+    document.getElementById("DEPTinput").value = QArecords[qaIndex].department;
+    editIndex = qaIndex;
+    editing = true;
+    document.getElementById("addUpdate").value = "Update";
+    document.getElementById("editHead").innerHTML = "Update record";
+    document.getElementById("addDelete").style.visibility = "visible";
+    editDisplay.style.visibility = "visible";
+    validate("NI");
+    validate("PHONE");
+    validate("ADDR");
+    validate("NAME");
 }
 
 function addDetails() {
-    chkHR.disabled = true;
-    chkIT.disabled = true;
-    chkSales.disabled = true;
 
-    tRow = document.createElement("tr");
-    tdNI = document.createElement("td");
-    tdName = document.createElement("td");
-    tdAddr = document.createElement("td");
-    tdPhone = document.createElement("td");
-    tdDept = document.createElement("td");
-    tdTest = document.createElement("td");
+    let newNI = document.getElementById("NIinput").value;
+    let newName = document.getElementById("NAMEinput").value;
+    let newAddr = document.getElementById("ADDRinput").value;
+    let newPhone = document.getElementById("PHONEinput").value;
+    let newDept = document.getElementById("DEPTinput").value;
 
-    tdNI.innerHTML = "<input type='text' id='newNI' maxlength='9'>";
-    tdName.innerHTML = "<input type='text' id='newName'>";
-    tdAddr.innerHTML = "<input type='text' id='newAddr'>";
-    tdPhone.innerHTML = "<input type='text' id='newPhone'>";
-    tdDept.innerHTML = "<select name='newdept' id='newDept'><option value='HR'>HR</option><option value='IT'>IT</option><option value='Sales'>Sales</option></select>";
-    tdTest.innerHTML = "<input type='button' value='+' onclick='addUser()' class='addBTN'><input type='button' value='X' onclick='clearInput()' class='remBTN'>";
-
-    tRow.appendChild(tdNI);
-    tRow.appendChild(tdName);
-    tRow.appendChild(tdAddr);
-    tRow.appendChild(tdPhone);
-    tRow.appendChild(tdDept);
-    tRow.appendChild(tdTest);
-
-    displayTable.appendChild(tRow);
-
-    display.appendChild(displayTable);
-}
-
-function addUser(){
-    let NI = document.getElementById("newNI").value;
-    let Name = document.getElementById("newName").value;
-    let Addr = document.getElementById("newAddr").value;
-    let Phone = document.getElementById("newPhone").value;
-    let Dept = document.getElementById("newDept").value;
-
-    QArecords.push({ninumber: NI, fullname: Name, address: Addr, phone: Phone, department: Dept});
-    clearInput();
-    tableDel(Dept);
-    tableAdd(Dept);
-
-}
-
-function clearInput() {
-    let table = document.getElementById("mainTable");
-    table.rows[(table.rows.length - 1)].remove("tr");
-
-    chkHR.disabled = false;
-    chkIT.disabled = false;
-    chkSales.disabled = false;
-
-}
-
-function test() {
-    mybox = document.getElementById("test");
-    mybox.style.backgroundColor = "white";
-    tip.innerHTML = "";
-
-    if(mybox.value.length < 9){
-        mybox.style.backgroundColor = "red";
+    if (editing) {
+        QArecords[editIndex].ninumber = newNI;
+        QArecords[editIndex].fullname = newName;
+        QArecords[editIndex].address = newAddr;
+        QArecords[editIndex].phone = newPhone;
+        QArecords[editIndex].department = newDept;
     }
-    else{
-        for(let i=0; i<9; i++){
+    else {
+        QArecords.push({ ninumber: newNI, fullname: newName, address: newAddr, phone: newPhone, department: newDept });
+    }
+    displayUpdate();
+    editDisplay.style.visibility = "hidden";
+    document.getElementById("addDelete").style.visibility = "hidden";
 
-            if(i<2 && mybox.value.charCodeAt(i) >= 65 && mybox.value.charCodeAt(i) <= 90 || i<2 && mybox.value.charCodeAt(i) >= 97 && mybox.value.charCodeAt(i) <= 122){
-                tip.innerHTML += "✓";
+}
+
+let t1 = false;
+let t2 = false;
+let t3 = false;
+let t4 = false;
+
+function validate(what) {
+
+    let newNI = document.getElementById("NIinput").value;
+    let niVal = document.getElementById("niVAL");
+    let NIcount = 0;
+    document.getElementById("addUpdate").disabled = true;
+
+    if (what == "NI") {
+        t1 = false;
+        niVal.innerHTML = "";
+        for (let i = 0; i < 9; i++) {
+
+            if (i < 2 && newNI.charCodeAt(i) >= 65 && newNI.charCodeAt(i) <= 90 || i < 2 && newNI.charCodeAt(i) >= 97 && newNI.charCodeAt(i) <= 122) {
+                niVal.innerHTML += "✓";
+                NIcount++;
             }
-            else if(i>=2 && i<=7 && mybox.value.charCodeAt(i) >= 48 && mybox.value.charCodeAt(i) <= 57){
-                tip.innerHTML += "✓";
+            else if (i >= 2 && i <= 7 && newNI.charCodeAt(i) >= 48 && newNI.charCodeAt(i) <= 57) {
+                niVal.innerHTML += "✓";
+                NIcount++;
             }
-            else if(i==8 && mybox.value.charCodeAt(i) >= 65 && mybox.value.charCodeAt(i) <= 90 || i==8 && mybox.value.charCodeAt(i) >= 97 && mybox.value.charCodeAt(i) <= 122){
-                tip.innerHTML += "✓";
+            else if (i == 8 && newNI.charCodeAt(i) >= 65 && newNI.charCodeAt(i) <= 90 || i == 8 && newNI.charCodeAt(i) >= 97 && newNI.charCodeAt(i) <= 122) {
+                niVal.innerHTML += "✓";
+                NIcount++;
             }
             else {
-                tip.innerHTML += "✖";
+                niVal.innerHTML += "✖";
             }
         }
     }
-    mybox.value = mybox.value.toUpperCase();
+    if (NIcount == 9) {
+        niVal.innerHTML = "OK";
+        t1 = true;
+    }
+
+    let newPhone = document.getElementById("PHONEinput").value;
+    let phoneVal = document.getElementById("phoneVAL");
+    let Phonecount = 0;
+    if (what == "PHONE") {
+        t2 = false;
+        phoneVal.innerHTML = "11 Digits";
+        for (let i = 0; i < newPhone.length; i++)
+
+            if (newPhone.charCodeAt(i) >= 48 && newPhone.charCodeAt(i) <= 57) {
+                Phonecount++;
+                if (Phonecount == 11) {
+                    phoneVal.innerHTML = "OK";
+                    if (!document.getElementById("PHONEinput").value.includes("-")) {
+                        document.getElementById("PHONEinput").value = newPhone.substr(0, 5) + "-" + newPhone.substr(5, 6);
+                    }
+                    t2 = true;
+                }
+            }
+            else {
+                phoneVal.innerHTML = "Numbers only";
+            }
+    }
+
+    let newAddr = document.getElementById("ADDRinput").value;
+    let addrVal = document.getElementById("addrVAL");
+    if (what == "ADDR") {
+        t3 = false;
+        addrVal.innerHTML = "";
+        if (newAddr.length > 0) {
+            addrVal.innerHTML = "OK";
+            t3 = true;
+        }
+        else {
+            addrVal.innerHTML = "At least one character";
+        }
+    }
+
+    let newName = document.getElementById("NAMEinput").value;
+    let nameVal = document.getElementById("nameVAL");
+    if (what == "NAME") {
+        t4 = false;
+        nameVal.innerHTML = "";
+        if (newName.length > 0) {
+            nameVal.innerHTML = "OK";
+            t4 = true;
+        }
+        else {
+            nameVal.innerHTML = "At least one character";
+        }
+    }
+
+    if (t1 == true && t2 == true && t3 == true && t4 == true) {
+        document.getElementById("addUpdate").disabled = false;
+    }
 }
+
+function popup() {
+    editDisplay.style.visibility = "visible";
+    document.getElementById("addUpdate").value = "Add";
+    document.getElementById("addUpdate").disabled = true;
+    document.getElementById("editHead").innerHTML = "Add new record";
+    document.getElementById("addDelete").style.visibility = "hidden";
+    document.getElementById("NIinput").value = "";
+    document.getElementById("NAMEinput").value = "";
+    document.getElementById("ADDRinput").value = "";
+    document.getElementById("PHONEinput").value = "";
+    validate("NI");
+    validate("PHONE");
+    validate("ADDR");
+    validate("NAME");
+
+}
+
+setInterval(displayUpdate(), 250);
