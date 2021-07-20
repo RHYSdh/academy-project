@@ -471,14 +471,14 @@ namespace Shop_Console
                 {
                     Console.WriteLine($" Product        Quantity       Price          Total, for  {month}/{year}");
                     Console.WriteLine("");
-                    Console.WriteLine(SQL.SQLReturn("productname,sum(quantity),price,price*sum(quantity)", 4, $"where year(saledate)='{year}' and month(saledate)='{month}' group by productname order by 4 desc;", 14));
+                    Console.WriteLine(SQL.SQLReturn("productname,count(*),price,price*quantity", 4, $"where year(saledate)='{year}' and month(saledate)='{month}' group by productname order by 4 desc;", 14));
                     Console.WriteLine("Total £" + SQL.SQLReturn("sum(price * quantity)", 1, $"where year(saledate)='{year}' and month(saledate)='{month}'", 5));
                 }
                 else
                 {
                     Console.WriteLine($" Product        Quantity       Price          Total, for year {year}");
                     Console.WriteLine("");
-                    Console.WriteLine(SQL.SQLReturn("productname,sum(quantity),price,price*sum(quantity)", 4, $"where year(saledate)='{year}' group by productname order by 4 desc;", 14));
+                    Console.WriteLine(SQL.SQLReturn("productname,count(*),price,price*quantity", 4, $"where year(saledate)='{year}' group by productname order by 4 desc;", 14));
                     Console.WriteLine("Total £" + SQL.SQLReturn("sum(price * quantity)", 1, $"where year(saledate)={year}", 5));
                 }
             }
@@ -488,13 +488,13 @@ namespace Shop_Console
                 {
                     Console.WriteLine($"Sales / Product for {month}/{year}");
                     Console.WriteLine("");
-                    Console.WriteLine(SQL.SQLReturn("sum(quantity),productname", 2, $"where year(saledate)='{year}' and month(saledate)='{month}' group by productname order by 1 desc;", 6));
+                    Console.WriteLine(SQL.SQLReturn("count(*),productname", 2, $"where year(saledate)='{year}' and month(saledate)='{month}' group by productname order by 1 desc;", 6));
                 }
                 else
                 {
                     Console.WriteLine("Sales / Product for year " + year);
                     Console.WriteLine("");
-                    Console.WriteLine(SQL.SQLReturn("sum(quantity),productname", 2, $"where year(saledate)='{year}' group by productname order by 1 desc;", 6));
+                    Console.WriteLine(SQL.SQLReturn("count(*),productname", 2, $"where year(saledate)='{year}' group by productname order by 1 desc;", 6));
                 }
             }
 
